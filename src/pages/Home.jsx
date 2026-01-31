@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMenu } from "../api/menu";
 import { addToCart, getCart } from "../api/cart";
+
 import Navbar from "../components/layout/Navbar";
 import MenuGrid from "../components/menu/MenuGrid";
 import CartDrawer from "../components/cart/CartDrawer";
 import Container from "../components/layout/Container";
 import Toast from "../components/common/Toast";
+import FullScreenLoader from "../components/common/FullScreenLoader";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -15,10 +17,20 @@ export default function Home() {
   const [cart, setCart] = useState({ items: [] });
   const [showCart, setShowCart] = useState(false);
   const [toast, setToast] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchMenu();
-    fetchCart();
+    const init = async () => {
+      try {
+        await Promise.all([fetchMenu(), fetchCart()]);
+      } catch (error) {
+        console.error("Init error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    init();
   }, []);
 
   const fetchMenu = async () => {
@@ -51,6 +63,11 @@ export default function Home() {
     (sum, item) => sum + item.quantity,
     0
   );
+
+  // ✅ FULL SCREEN LOADER
+  if (loading) {
+    return <FullScreenLoader />;
+  }
 
   return (
     <>
