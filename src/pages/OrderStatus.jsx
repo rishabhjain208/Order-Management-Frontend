@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { FaHome } from "react-icons/fa";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://order-management-backend-if9a.onrender.com");
 
 export default function OrderStatus() {
   const { id } = useParams();
